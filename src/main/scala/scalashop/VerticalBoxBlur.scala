@@ -56,8 +56,11 @@ object VerticalBoxBlur {
    *  columns.
    */
   def parBlur(src: Img, dst: Img, numTasks: Int, radius: Int): Unit = {
-    // TODO implement using the `task` construct and the `blur` method
-    ???
+    val delimeter = if(src.width / numTasks > 0) src.width / numTasks else 1
+    val delimiterPoint = 0 to src.width by delimeter
+    val points = for {point <- delimiterPoint} yield List.range(point, point + delimeter)
+    val res = points.init.map(xs => task(blur(src, dst, xs.head, xs.last + 1, radius)))
+    res.foreach(t => t.join())
   }
 
 }
